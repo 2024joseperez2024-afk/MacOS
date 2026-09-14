@@ -65,7 +65,11 @@ class _NidoScreenState extends State<NidoScreen> {
   bool showMnemonic = false;
   bool showPrivateKey = false;
   static const int defaultRpcCount = 9;
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage(
+  mOptions: const MacOsOptions(
+    useDataProtectionKeyChain: false,
+  ),
+);
   final ScrollController _scrollController = ScrollController();
   Map<int, List<String>> paymentHashes = {};
   Map<String, String>? selectedRpc;
