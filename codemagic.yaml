@@ -13,6 +13,16 @@ workflows:
         script: |
           flutter pub get
 
+      - name: Verificar configuración Dart
+        script: |
+          echo "=== CONFIGURACIÓN SECURE STORAGE ==="
+          grep -n -A5 -B2 "FlutterSecureStorage secureStorage" lib/screens/nido.dart
+
+      - name: Buscar instancias de SecureStorage
+        script: |
+          echo "=== TODAS LAS INSTANCIAS ==="
+          grep -Rni "FlutterSecureStorage" lib --include="*.dart" || true
+
       - name: Compilar para macOS Release
         script: |
           flutter build macos --release
