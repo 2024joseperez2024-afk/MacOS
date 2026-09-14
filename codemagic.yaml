@@ -1,0 +1,54 @@
+workflows:
+  Huevobit-MacOS:
+    name: Huevobit Compilación macOS
+    max_build_duration: 60
+
+    environment:
+      flutter: 3.24.3
+      xcode: 16.0
+
+    scripts:
+
+      - name: Instalar dependencias
+        script: |
+          flutter pub get
+
+      - name: Compilar para macOS Release
+        script: |
+          flutter build macos --release
+
+      - name: Verificar entitlements de la aplicación
+        script: |
+          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 2 | head -n 1)
+
+          echo "=== APP ==="
+          echo "$APP_PATH"
+
+          echo "=== ENTITLEMENTS FIRMADOS ==="
+          codesign -d --entitlements :- "$APP_PATH"
+
+      - name: Crear instalador DMG
+        script: |
+          brew install create-dmg
+
+          # Buscar la ruta real del .app generado por Flutter
+          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 2)
+
+          OUTPUT_DMG="build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg"
+
+          rm -f "$OUTPUT_DMG"
+          rm -f "build/macos/Build/Products/Release/rw."*.dmg
+
+          create-dmg \
+            --volname "Huevobit 2.1 Installer" \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --app-drop-link 450 200 \
+            "$OUTPUT_DMG" \
+            "$APP_PATH"
+
+          rm -f "build/macos/Build/Products/Release/rw."*.dmg
+
+    artifacts:
+      - build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg
+      - build/macos/Build/Products/Release/*.app
