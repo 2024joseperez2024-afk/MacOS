@@ -27,7 +27,7 @@ workflows:
           echo "=== ENTITLEMENTS FIRMADOS ==="
           codesign -d --entitlements :- "$APP_PATH"
 
-       - name: Inspeccionar flutter_secure_storage macOS
+      - name: Inspeccionar flutter_secure_storage macOS
         script: |
           echo "=== VERSIONES ==="
           grep -A3 "flutter_secure_storage:" pubspec.lock
@@ -41,7 +41,7 @@ workflows:
           echo "=== ARCHIVOS DEL PLUGIN MACOS ==="
           find ~/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3 -maxdepth 3 -type f | sort
 
-       - name: Crear instalador DMG
+      - name: Crear instalador DMG
         script: |
           brew install create-dmg
 
