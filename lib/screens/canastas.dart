@@ -53,7 +53,11 @@ class _CanastasScreenState extends State<CanastasScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _mostrarMensajeBienvenida = true;
   bool _noMostrarMensajeBienvenida = false;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
+  mOptions: MacOsOptions(
+    useDataProtectionKeyChain: false,
+  ),
+);
   final Map<int, int> _participantesPorCanasta = {};
   final Map<int, String> _estadosPorCanasta = {};
   double? balance;
