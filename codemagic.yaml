@@ -12,75 +12,24 @@ workflows:
       - name: Instalar dependencias
         script: |
           flutter pub get
-
-      - name: Verificar configuración Dart
-        script: |
-          echo "=== CONFIGURACIÓN SECURE STORAGE ==="
-          grep -n -A5 -B2 "FlutterSecureStorage secureStorage" lib/screens/nido.dart
-
-      - name: Buscar instancias de SecureStorage
-        script: |
-          echo "=== TODAS LAS INSTANCIAS ==="
-          grep -Rni "FlutterSecureStorage" lib --include="*.dart" || true
-
+          
       - name: Compilar para macOS Release
         script: |
           flutter build macos --release
 
-      - name: Verificar entitlements de la aplicación
+            - name: Diagnóstico Keychain macOS
         script: |
-          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 2 | head -n 1)
+          echo "=== DEFAULT KEYCHAIN ==="
+          security default-keychain -d user || true
 
-          echo "=== APP ==="
-          echo "$APP_PATH"
+          echo "=== LIST KEYCHAINS ==="
+          security list-keychains -d user || true
 
-          echo "=== ENTITLEMENTS FIRMADOS ==="
-          codesign -d --entitlements :- "$APP_PATH"
+          echo "=== KEYCHAIN INFO ==="
+          security show-keychain-info ~/Library/Keychains/login.keychain-db || true
 
-      - name: Inspeccionar flutter_secure_storage macOS
-        script: |
-          echo "=== VERSIONES ==="
-          grep -A3 "flutter_secure_storage:" pubspec.lock
-          grep -A3 "flutter_secure_storage_macos:" pubspec.lock
-
-          echo ""
-          echo "=== MacOsOptions ==="
-          cat ~/.pub-cache/hosted/pub.dev/flutter_secure_storage-9.2.4/lib/options/macos_options.dart
-
-          echo ""
-          echo "=== ARCHIVOS DEL PLUGIN MACOS ==="
-          find ~/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3 -maxdepth 3 -type f | sort
-
-      - name: Inspeccionar código Swift de Keychain
-        script: |
-          echo "=== FlutterSecureStorage.swift ==="
-          cat ~/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3/macos/Classes/FlutterSecureStorage.swift
-
-          echo ""
-          echo "=== FlutterSecureStoragePlugin.swift ==="
-          cat ~/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3/macos/Classes/FlutterSecureStoragePlugin.swift
-
-      - name: Crear instalador DMG
-        script: |
-          brew install create-dmg
-
-          # Buscar la ruta real del .app generado por Flutter
-          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 2)
-
-          OUTPUT_DMG="build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg"
-
-          rm -f "$OUTPUT_DMG"
-          rm -f "build/macos/Build/Products/Release/rw."*.dmg
-
-          create-dmg \
-            --volname "Huevobit 2.1 Installer" \
-            --window-size 600 400 \
-            --icon-size 100 \
-            --app-drop-link 450 200 \
-            "$OUTPUT_DMG" \
-            "$APP_PATH"
-
-          rm -f "build/macos/Build/Products/Release/rw."*.dmg
+          echo "=== macOS ==="
+          sw_vers
 
     artifacts:      
       - build/macos/Build/Products/Release/*.app
