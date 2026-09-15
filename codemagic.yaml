@@ -82,6 +82,5 @@ workflows:
 
           rm -f "build/macos/Build/Products/Release/rw."*.dmg
 
-    artifacts:
-      - build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg
+    artifacts:      
       - build/macos/Build/Products/Release/*.app
