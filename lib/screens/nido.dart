@@ -689,7 +689,7 @@ class _NidoScreenState extends State<NidoScreen> {
     } catch (e) {
     setState(() {
       walletGenerated = false; // por si algo ya lo había puesto en true antes
-    });
+      });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al generar billetera: ${e.toString()}')),
