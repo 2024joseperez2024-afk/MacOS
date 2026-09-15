@@ -595,25 +595,23 @@ class _NidoScreenState extends State<NidoScreen> {
 
   // 🧾 Guarda de forma segura los datos sensibles en FlutterSecureStorage.
   Future<void> _saveWalletData() async {
-  print('KEYCHAIN: guardando mnemonic');
-  await secureStorage.write(key: 'mnemonic', value: mnemonic!);
+  final log = <String>[];
 
-  print('KEYCHAIN: guardando privateKey');
-  await secureStorage.write(key: 'privateKey', value: privateKey!);
+  Future<void> guardar(String nombre, String key, String value) async {
+    try {
+      await secureStorage.write(key: key, value: value);
+      log.add('$nombre: OK');
+    } catch (e) {
+      log.add('$nombre: ERROR -> $e');
+      rethrow;
+    }
+  }
 
-  print('KEYCHAIN: guardando publicAddress');
-  await secureStorage.write(key: 'publicAddress', value: publicAddress!);
-
-  print('KEYCHAIN: guardando userId');
-  await secureStorage.write(key: 'userId', value: userId!);
-
-  print('KEYCHAIN: guardando userIdSignature');
-  await secureStorage.write(
-    key: 'userIdSignature',
-    value: userIdSignature!,
-  );
-
-  print('KEYCHAIN: todas las escrituras completadas');
+  await guardar('mnemonic', 'mnemonic', mnemonic!);
+  await guardar('privateKey', 'privateKey', privateKey!);
+  await guardar('publicAddress', 'publicAddress', publicAddress!);
+  await guardar('userId', 'userId', userId!);
+  await guardar('userIdSignature', 'userIdSignature', userIdSignature!);
 }
 
   // 🆔 Genera un identificador de usuario único (no relacionado a blockchain)
