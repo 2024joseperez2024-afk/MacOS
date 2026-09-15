@@ -12,12 +12,12 @@ workflows:
       - name: Instalar dependencias
         script: |
           flutter pub get
-          
+
       - name: Compilar para macOS Release
         script: |
           flutter build macos --release
 
-            - name: Diagnóstico Keychain macOS
+      - name: Diagnóstico Keychain macOS
         script: |
           echo "=== DEFAULT KEYCHAIN ==="
           security default-keychain -d user || true
@@ -31,5 +31,5 @@ workflows:
           echo "=== macOS ==="
           sw_vers
 
-    artifacts:      
+    artifacts:
       - build/macos/Build/Products/Release/*.app
