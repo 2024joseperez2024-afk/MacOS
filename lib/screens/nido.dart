@@ -678,10 +678,18 @@ class _NidoScreenState extends State<NidoScreen> {
         userIdSignature = signature;
       });
 
-      await _saveWalletData();
+      await _saveWalletData(); // si falla, lanza excepción y salta al catch
+
+    // 👇 solo llegamos aquí si el guardado fue exitoso
+    setState(() {
+      walletGenerated = true;
+    });
+      
       await _fetchBalance(address.hex);
     } catch (e) {
-      'Error al generar la billetera blockchain: $e';
+    setState(() {
+      walletGenerated = false; // por si algo ya lo había puesto en true antes
+    });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al generar billetera: ${e.toString()}')),
