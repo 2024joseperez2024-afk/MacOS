@@ -15,21 +15,30 @@ workflows:
 
       - name: Compilar para macOS Release
         script: |
-          flutter build macos --release
+          flutter build macos --release      
 
-      - name: Diagnóstico Keychain macOS
+      - name: Crear instalador DMG
         script: |
-          echo "=== DEFAULT KEYCHAIN ==="
-          security default-keychain -d user || true
+          brew install create-dmg
 
-          echo "=== LIST KEYCHAINS ==="
-          security list-keychains -d user || true
+          # Buscar la ruta real del .app generado por Flutter
+          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 2)
 
-          echo "=== KEYCHAIN INFO ==="
-          security show-keychain-info ~/Library/Keychains/login.keychain-db || true
+          OUTPUT_DMG="build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg"
 
-          echo "=== macOS ==="
-          sw_vers
+          rm -f "$OUTPUT_DMG"
+          rm -f "build/macos/Build/Products/Release/rw."*.dmg
+
+          create-dmg \
+            --volname "Huevobit 2.1 Installer" \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --app-drop-link 450 200 \
+            "$OUTPUT_DMG" \
+            "$APP_PATH"
+
+          rm -f "build/macos/Build/Products/Release/rw."*.dmg
 
     artifacts:
+      - build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg
       - build/macos/Build/Products/Release/*.app
