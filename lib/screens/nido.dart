@@ -67,7 +67,7 @@ class _NidoScreenState extends State<NidoScreen> {
   static const int defaultRpcCount = 9;
   final FlutterSecureStorage secureStorage = FlutterSecureStorage(
   mOptions: const MacOsOptions(
-    usesDataProtectionKeyChain: false,
+    useDataProtectionKeyChain: false,
   ),
 );
   final ScrollController _scrollController = ScrollController();
