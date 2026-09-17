@@ -1,45 +1,44 @@
-name: huevobit
-description: "Juego Blockchain Descentralizado"
-publish_to: 'Ramón Telleria'
-version: 2.1.0+2
+workflows:
+  Huevobit-MacOS:
+    name: Huevobit Compilación macOS
+    max_build_duration: 60
 
-environment:
-    sdk: ">=3.5.3 <4.0.0"
-    flutter: ">=3.24.3"
+    environment:
+      flutter: 3.24.3
+      xcode: 16.0
 
-dependencies:
-    flutter:
-        sdk: flutter
+    scripts:
 
-    stream_transform: ^2.0.0
-    async: ^2.10.0
-    hex: ^0.2.0
-    uuid: ^4.5.1
-    convert: ^3.1.1
-    flutter_secure_storage: ^9.0.0
-    overlay_support: ^2.1.0
-    url_launcher: ^6.1.10
-    lottie: ^2.7.0
-    collection: ^1.18.0
-    bip39: ^1.0.6
-    web3dart: ^2.7.3
-    ed25519_hd_key: ^2.0.1
-    http: ^1.4.0
-    crypto: ^3.0.3
-    universal_platform: ^1.0.0
-    shared_preferences: ^2.2.2
-    window_manager: 0.4.3
-    bip32: ^2.0.0
+      - name: Instalar dependencias
+        script: |
+          flutter pub get
 
-dev_dependencies:
-    flutter_test:
-        sdk: flutter
-    flutter_lints: ^5.0.0
+      - name: Compilar para macOS Release
+        script: |
+          flutter build macos --release      
 
-flutter:
-    uses-material-design: true
+      - name: Crear instalador DMG
+        script: |
+          brew install create-dmg
 
-    assets:
-        - assets/contract_abi.json
-        - assets/animations/incubadora.json
-        - assets/animations/abriendo_huevo.json
+          # Buscar la ruta real del .app generado por Flutter
+          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 2)
+
+          OUTPUT_DMG="build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg"
+
+          rm -f "$OUTPUT_DMG"
+          rm -f "build/macos/Build/Products/Release/rw."*.dmg
+
+          create-dmg \
+            --volname "Huevobit 2.1 Installer" \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --app-drop-link 450 200 \
+            "$OUTPUT_DMG" \
+            "$APP_PATH"
+
+          rm -f "build/macos/Build/Products/Release/rw."*.dmg
+
+    artifacts:
+      - build/macos/Build/Products/Release/Huevobit 2.1-Installer.dmg
+      - build/macos/Build/Products/Release/*.app
