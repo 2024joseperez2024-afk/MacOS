@@ -55,7 +55,7 @@ class _CanastasScreenState extends State<CanastasScreen> {
   bool _noMostrarMensajeBienvenida = false;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
   mOptions: MacOsOptions(
-    usesDataProtectionKeyChain: false,
+    useDataProtectionKeyChain: false,
   ),
 );
   final Map<int, int> _participantesPorCanasta = {};
